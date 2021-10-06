@@ -1,16 +1,16 @@
 import React from 'react'
 import s from './Posts.module.css'
-import {Button} from '../UI/Button/Button'
 
 type PostItemProps = {
     id: number
     title: string
     description: string
     index: number
+    removePost: (id: number) => void
 }
 
 export const PostItem: React.FC<PostItemProps> = props => {
-    const {children, id, title, description, index} = props
+    const {id, title, description, index, removePost} = props
 
     return (
         <div className={s.itemContainer}>
@@ -20,7 +20,7 @@ export const PostItem: React.FC<PostItemProps> = props => {
             </div>
 
             <div>
-                <Button>Delete</Button>
+                <button onClick={() => removePost(id)}>Delete</button>
             </div>
         </div>
     )

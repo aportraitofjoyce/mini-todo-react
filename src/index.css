@@ -38,11 +38,11 @@ button {
   font-size: 16px;
 }
 
-input {
+input, select {
   font-size: 16px;
   border: none;
   border-radius: 4px;
   padding: 8px;
   width: 100%;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
