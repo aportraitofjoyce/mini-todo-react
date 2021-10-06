@@ -1,0 +1,9 @@
+.itemContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #ddd;
+    padding: 24px;
+    border-radius: 4px;
+    margin-bottom: 24px;
+}
