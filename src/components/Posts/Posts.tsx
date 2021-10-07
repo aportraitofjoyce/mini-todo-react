@@ -1,11 +1,11 @@
 import React from 'react'
 import s from './Posts.module.css'
 import {PostItem} from './PostItem'
-import {FilterType, PostsType, SortOptionsType} from '../../App'
 import {PostForm} from './PostForm'
 import {PostsFilter} from './PostsFilter'
 import {Modal} from '../UI/Modal/Modal'
 import {CSSTransition, TransitionGroup} from 'react-transition-group'
+import {FilterType, PostsType, SortOptionsType} from '../../pages/PostsPage'
 
 type PostsProps = {
     posts: PostsType[]

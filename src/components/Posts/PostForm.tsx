@@ -1,5 +1,5 @@
 import React, {SyntheticEvent, useState} from 'react'
-import {PostsType} from '../../App'
+import {PostsType} from '../../pages/PostsPage'
 
 type PostFormProps = {
     onSubmit: (post: PostsType) => void

@@ -1,6 +1,8 @@
 import React from 'react'
 import s from './Posts.module.css'
-import {PostsType} from '../../App'
+import {PostsType} from '../../pages/PostsPage'
+import {useHistory} from 'react-router-dom'
+import {PATH} from '../../routes/routes'
 
 type PostItemProps = {
     post: PostsType
@@ -9,6 +11,7 @@ type PostItemProps = {
 
 export const PostItem: React.FC<PostItemProps> = props => {
     const {post, removePost} = props
+    const history = useHistory()
 
     return (
         <div className={s.itemContainer}>
@@ -17,7 +20,8 @@ export const PostItem: React.FC<PostItemProps> = props => {
                 <div>{post.body}</div>
             </div>
 
-            <div>
+            <div className={s.buttonsContainer}>
+                <button onClick={() => history.push(`${PATH.posts}/${post.id}`)}>Open</button>
                 <button onClick={() => removePost(post.id)}>Delete</button>
             </div>
         </div>

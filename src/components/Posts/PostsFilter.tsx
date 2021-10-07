@@ -1,7 +1,7 @@
 import React from 'react'
 import {PostsSearchForm} from './PostsSearchForm'
 import {PostsSort} from './PostsSort'
-import {FilterType, SortOptionsType} from '../../App'
+import {FilterType, SortOptionsType} from '../../pages/PostsPage'
 
 type PostsFilterProps = {
     options: SortOptionsType[]

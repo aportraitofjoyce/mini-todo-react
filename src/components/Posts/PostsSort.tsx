@@ -1,5 +1,5 @@
 import React, {ChangeEvent} from 'react'
-import {SortOptionsType} from '../../App'
+import {SortOptionsType} from '../../pages/PostsPage'
 
 type PostsSortProps = {
     options: SortOptionsType[]
