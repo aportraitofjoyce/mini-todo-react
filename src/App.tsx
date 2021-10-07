@@ -1,6 +1,8 @@
 import React, {useEffect, useMemo, useState} from 'react'
 import {Posts} from './components/Posts/Posts'
 import {postsAPI} from './api/posts-api'
+import {Progress} from './components/UI/Progress/Progress'
+import {useFetching} from './hooks/useFetching'
 
 export type PostsType = {
     id: number
@@ -24,12 +26,10 @@ export type FilterType = {
 
 export const App: React.FC = () => {
     const [posts, setPosts] = useState<PostsType[]>([])
-
     const options: SortOptionsType[] = [
         {value: 'title', title: 'Sort by title'},
         {value: 'body', title: 'Sort by description'}
     ]
-
     const [filter, setFilter] = useState<FilterType>({sort: '', search: ''})
     const [modalVisible, setModalVisible] = useState<boolean>(false)
 
@@ -52,23 +52,29 @@ export const App: React.FC = () => {
         setPosts(posts.filter(p => p.id !== id))
     }
 
+    const [fetchPosts, isLoading, error] = useFetching(async () => {
+        const posts = await postsAPI.getPosts()
+        setPosts(posts)
+    })
+
     useEffect(() => {
-        const posts = postsAPI.getPosts()
-        posts.then(response => setPosts(response))
+        fetchPosts()
     }, [])
 
     return (
         <div className={'app'}>
-            <Posts posts={sortedAndFilteredPosts}
-                   title={'Posts List #1'}
-                   removePost={removePost}
-                   options={options}
-                   addNewPost={addNewPost}
-                   filter={filter}
-                   setFilter={setFilter}
-                   modalVisible={modalVisible}
-                   setModalVisible={setModalVisible}
-            />
+            {isLoading
+                ? <Progress/>
+                : <Posts posts={sortedAndFilteredPosts}
+                         title={'Posts List #1'}
+                         removePost={removePost}
+                         options={options}
+                         addNewPost={addNewPost}
+                         filter={filter}
+                         setFilter={setFilter}
+                         modalVisible={modalVisible}
+                         setModalVisible={setModalVisible}/>}
+
         </div>
     )
 }
