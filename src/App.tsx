@@ -1,6 +1,5 @@
-import React, {useState} from 'react'
+import React, {useMemo, useState} from 'react'
 import {Posts} from './components/Posts/Posts'
-import {PostForm} from './components/Posts/PostForm'
 
 export type PostsType = {
     id: number
@@ -30,10 +29,28 @@ export const App: React.FC = () => {
         {value: 'description', title: 'Sort by description'}
     ]
 
-    const sortPosts = (option: string) => {
-        setPosts([...posts]
-            .sort((a: StringAsKeyHelper, b: StringAsKeyHelper) => a[option].localeCompare(b[option])))
+    const [selectedOption, setSelectedOption] = useState<string>('')
+    const [searchQuery, setSearchQuery] = useState<string>('')
+
+    const getSortType = (option: string) => {
+        setSelectedOption(option)
     }
+
+    const getSearchQuery = (query: string) => {
+        setSearchQuery(query)
+    }
+
+    const sortedPosts = useMemo(() => {
+        if (selectedOption) {
+            return [...posts]
+                .sort((a: StringAsKeyHelper, b: StringAsKeyHelper) => a[selectedOption].localeCompare(b[selectedOption]))
+        }
+        return posts
+    }, [selectedOption, posts])
+
+    const sortedAndFilteredPosts = useMemo(() => {
+        return sortedPosts.filter(p => p.title.includes(searchQuery))
+    }, [sortedPosts, searchQuery])
 
     const addNewPost = (post: PostsType) => {
         setPosts([...posts, post])
@@ -45,12 +62,15 @@ export const App: React.FC = () => {
 
     return (
         <div className={'app'}>
-            <PostForm onSubmit={addNewPost}/>
-            <Posts posts={posts}
+            <Posts posts={sortedAndFilteredPosts}
                    title={'Posts List #1'}
                    removePost={removePost}
                    options={options}
-                   sortPosts={sortPosts}/>
+                   addNewPost={addNewPost}
+                   selectedOption={selectedOption}
+                   getSortType={getSortType}
+                   searchQuery={searchQuery}
+                   getSearchQuery={getSearchQuery}/>
         </div>
     )
 }
