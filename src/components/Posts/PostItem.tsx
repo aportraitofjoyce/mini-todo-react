@@ -1,26 +1,24 @@
 import React from 'react'
 import s from './Posts.module.css'
+import {PostsType} from '../../App'
 
 type PostItemProps = {
-    id: number
-    title: string
-    description: string
-    index: number
+    post: PostsType
     removePost: (id: number) => void
 }
 
 export const PostItem: React.FC<PostItemProps> = props => {
-    const {id, title, description, index, removePost} = props
+    const {post, removePost} = props
 
     return (
         <div className={s.itemContainer}>
             <div>
-                <strong>{`#${index} ${title}`}</strong>
-                <div>{description}</div>
+                <strong>{post.title}</strong>
+                <div>{post.body}</div>
             </div>
 
             <div>
-                <button onClick={() => removePost(id)}>Delete</button>
+                <button onClick={() => removePost(post.id)}>Delete</button>
             </div>
         </div>
     )

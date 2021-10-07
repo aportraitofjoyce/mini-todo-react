@@ -13,8 +13,11 @@ export const PostsSearchForm: React.FC<PostsSearchFormProps> = props => {
     }
 
     return (
-        <form>
-            <input type='text' placeholder={'Search'} value={value} onChange={onChangeHandler}/>
-        </form>
+        <div>
+            <input type='text'
+                   placeholder={'Search'}
+                   value={value}
+                   onChange={onChangeHandler}/>
+        </div>
     )
 }

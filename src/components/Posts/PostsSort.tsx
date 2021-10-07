@@ -18,13 +18,8 @@ export const PostsSort: React.FC<PostsSortProps> = props => {
         <div>
             <select value={selectedOption}
                     onChange={onChangeHandler}>
-
                 <option disabled value=''>Sort by...</option>
-                {options.map(o =>
-                    <option key={o.value} value={o.value}>
-                        {o.title}
-                    </option>)}
-
+                {options.map(o => <option key={o.value} value={o.value}>{o.title}</option>)}
             </select>
         </div>
     )

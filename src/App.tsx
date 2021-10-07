@@ -1,10 +1,11 @@
-import React, {useMemo, useState} from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
 import {Posts} from './components/Posts/Posts'
+import {postsAPI} from './api/posts-api'
 
 export type PostsType = {
     id: number
     title: string
-    description: string
+    body: string
 }
 
 export type SortOptionsType = {
@@ -16,49 +17,45 @@ type StringAsKeyHelper = {
     [index: string]: any
 }
 
+export type FilterType = {
+    sort: string
+    search: string
+}
+
 export const App: React.FC = () => {
-    const [posts, setPosts] = useState<PostsType[]>([
-        {id: 1, title: 'dfhTitle', description: '65Some description'},
-        {id: 2, title: 'kmhTitle', description: '2Some description'},
-        {id: 3, title: 'ghkTitle', description: '4Some description'},
-        {id: 4, title: 'Title', description: '6Some description'},
-    ])
+    const [posts, setPosts] = useState<PostsType[]>([])
 
     const options: SortOptionsType[] = [
         {value: 'title', title: 'Sort by title'},
-        {value: 'description', title: 'Sort by description'}
+        {value: 'body', title: 'Sort by description'}
     ]
 
-    const [selectedOption, setSelectedOption] = useState<string>('')
-    const [searchQuery, setSearchQuery] = useState<string>('')
-
-    const getSortType = (option: string) => {
-        setSelectedOption(option)
-    }
-
-    const getSearchQuery = (query: string) => {
-        setSearchQuery(query)
-    }
+    const [filter, setFilter] = useState<FilterType>({sort: '', search: ''})
+    const [modalVisible, setModalVisible] = useState<boolean>(false)
 
     const sortedPosts = useMemo(() => {
-        if (selectedOption) {
-            return [...posts]
-                .sort((a: StringAsKeyHelper, b: StringAsKeyHelper) => a[selectedOption].localeCompare(b[selectedOption]))
-        }
+        if (filter.sort) return [...posts]
+            .sort((a: StringAsKeyHelper, b: StringAsKeyHelper) => a[filter.sort].localeCompare(b[filter.sort]))
         return posts
-    }, [selectedOption, posts])
+    }, [filter.sort, posts])
 
     const sortedAndFilteredPosts = useMemo(() => {
-        return sortedPosts.filter(p => p.title.includes(searchQuery))
-    }, [sortedPosts, searchQuery])
+        return sortedPosts.filter(p => p.title.toLocaleLowerCase().includes(filter.search))
+    }, [sortedPosts, filter.search])
 
     const addNewPost = (post: PostsType) => {
         setPosts([...posts, post])
+        setModalVisible(false)
     }
 
     const removePost = (id: number) => {
         setPosts(posts.filter(p => p.id !== id))
     }
+
+    useEffect(() => {
+        const posts = postsAPI.getPosts()
+        posts.then(response => setPosts(response))
+    }, [])
 
     return (
         <div className={'app'}>
@@ -67,10 +64,11 @@ export const App: React.FC = () => {
                    removePost={removePost}
                    options={options}
                    addNewPost={addNewPost}
-                   selectedOption={selectedOption}
-                   getSortType={getSortType}
-                   searchQuery={searchQuery}
-                   getSearchQuery={getSearchQuery}/>
+                   filter={filter}
+                   setFilter={setFilter}
+                   modalVisible={modalVisible}
+                   setModalVisible={setModalVisible}
+            />
         </div>
     )
 }

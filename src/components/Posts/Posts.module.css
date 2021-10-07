@@ -7,3 +7,21 @@
     border-radius: 4px;
     margin-bottom: 24px;
 }
+
+.postAnimationEnter {
+    transform: translateX(-100%);
+}
+
+.postAnimationEnterActive {
+    transform: translateX(0);
+    transition: all 500ms ease-in;
+}
+
+.postAnimationExit {
+    opacity: 1;
+}
+
+.postAnimationExitActive {
+    transform: translateX(100%);
+    transition: all 500ms ease-in;
+}

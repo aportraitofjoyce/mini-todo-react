@@ -1,44 +1,67 @@
 import React from 'react'
+import s from './Posts.module.css'
 import {PostItem} from './PostItem'
-import {PostsType, SortOptionsType} from '../../App'
-import {PostsSort} from './PostsSort'
-import {PostsSearchForm} from './PostsSearchForm'
+import {FilterType, PostsType, SortOptionsType} from '../../App'
 import {PostForm} from './PostForm'
+import {PostsFilter} from './PostsFilter'
+import {Modal} from '../UI/Modal/Modal'
+import {CSSTransition, TransitionGroup} from 'react-transition-group'
 
 type PostsProps = {
     posts: PostsType[]
     title: string
     removePost: (id: number) => void
     options: SortOptionsType[]
-    selectedOption: string
-    getSortType: (option: string) => void
     addNewPost: (post: PostsType) => void
-    searchQuery: string
-    getSearchQuery: (query: string) => void
+    filter: FilterType
+    setFilter: (filter: FilterType) => void
+    modalVisible: boolean
+    setModalVisible: (modalVisible: boolean) => void
 }
 
 export const Posts: React.FC<PostsProps> = props => {
-    const {posts, title, removePost, options, selectedOption, addNewPost, getSortType, searchQuery, getSearchQuery} = props
+    const {
+        posts,
+        title,
+        removePost,
+        options,
+        addNewPost,
+        filter,
+        setFilter,
+        modalVisible,
+        setModalVisible
+    } = props
 
     return (
         <div>
-            <PostForm onSubmit={addNewPost}/>
+            <Modal visible={modalVisible} setVisible={setModalVisible}>
+                <PostForm onSubmit={addNewPost}/>
+            </Modal>
+
             <h2 style={{margin: '24px 0'}}>{title}</h2>
-            {posts.length === 0 && <h3>Упс, посты закончились...</h3>}
+            <button onClick={() => setModalVisible(true)} style={{marginBottom: 24}}>Add post</button>
 
-            <PostsSearchForm value={searchQuery} onChange={getSearchQuery}/>
+            <PostsFilter options={options}
+                         filter={filter}
+                         setFilter={setFilter}/>
 
-            <PostsSort options={options}
-                       selectedOption={selectedOption}
-                       onChange={getSortType}/>
+            <TransitionGroup>
+                {posts.map(p =>
+                    <CSSTransition key={p.id}
+                                   timeout={500}
+                                   classNames={{
+                                       enter: s.postAnimationEnter,
+                                       enterActive: s.postAnimationEnterActive,
+                                       exit: s.postAnimationExit,
+                                       exitActive: s.postAnimationExitActive
+                                   }}>
+                        <PostItem post={p}
+                                  removePost={removePost}/>
+                    </CSSTransition>
+                )}
+            </TransitionGroup>
 
-            {posts.map((p, i) =>
-                <PostItem key={p.id}
-                          id={p.id}
-                          title={p.title}
-                          description={p.description}
-                          index={i + 1}
-                          removePost={removePost}/>)}
+            {!posts.length && <h3>Упс, посты закончились...</h3>}
         </div>
     )
 }

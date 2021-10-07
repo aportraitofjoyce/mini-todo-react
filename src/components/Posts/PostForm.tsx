@@ -8,28 +8,28 @@ type PostFormProps = {
 export const PostForm: React.FC<PostFormProps> = props => {
     const {onSubmit} = props
 
-    const [post, setPost] = useState<{ title: string, description: string }>({
+    const [newPost, setNewPost] = useState<{ title: string, body: string }>({
         title: '',
-        description: ''
+        body: ''
     })
 
     const onSubmitHandler = (e: SyntheticEvent) => {
         e.preventDefault()
-        onSubmit({...post, id: Date.now()})
-        setPost({title: '', description: ''})
+        onSubmit({...newPost, id: Date.now()})
+        setNewPost({title: '', body: ''})
     }
 
     return (
         <form>
             <input type='text'
                    placeholder={'Title...'}
-                   value={post.title}
-                   onChange={e => setPost({...post, title: e.target.value})}/>
+                   value={newPost.title}
+                   onChange={e => setNewPost({...newPost, title: e.target.value})}/>
 
             <input type='text'
                    placeholder={'Description...'}
-                   value={post.description}
-                   onChange={e => setPost({...post, description: e.target.value})}/>
+                   value={newPost.body}
+                   onChange={e => setNewPost({...newPost, body: e.target.value})}/>
 
             <button type={'submit'} onClick={onSubmitHandler}>Add</button>
         </form>
