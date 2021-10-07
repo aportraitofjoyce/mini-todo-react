@@ -1,0 +1,18 @@
+.container {
+    margin: 24px 0;
+}
+
+.container span {
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.container span:hover {
+    opacity: .5;
+}
+
+.active {
+    background: white;
+    color: #333;
+}

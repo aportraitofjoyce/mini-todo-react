@@ -13,7 +13,7 @@ export const PostItem: React.FC<PostItemProps> = props => {
     return (
         <div className={s.itemContainer}>
             <div>
-                <strong>{post.title}</strong>
+                <strong>#{post.id} - {post.title}</strong>
                 <div>{post.body}</div>
             </div>
 

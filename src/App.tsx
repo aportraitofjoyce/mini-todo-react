@@ -1,8 +1,10 @@
 import React, {useEffect, useMemo, useState} from 'react'
 import {Posts} from './components/Posts/Posts'
-import {postsAPI} from './api/posts-api'
+import {PostsAPI} from './api/posts-api'
 import {Progress} from './components/UI/Progress/Progress'
 import {useFetching} from './hooks/useFetching'
+import {getPagesCount} from './utils/pages'
+import {Pagination} from './components/UI/Pagination/Pagination'
 
 export type PostsType = {
     id: number
@@ -32,6 +34,9 @@ export const App: React.FC = () => {
     ]
     const [filter, setFilter] = useState<FilterType>({sort: '', search: ''})
     const [modalVisible, setModalVisible] = useState<boolean>(false)
+    const [pagesCount, setPagesCount] = useState<number>(1)
+    const [postsLimit, setPostsLimit] = useState<number>(10)
+    const [currentPage, setCurrentPage] = useState<number>(1)
 
     const sortedPosts = useMemo(() => {
         if (filter.sort) return [...posts]
@@ -52,14 +57,18 @@ export const App: React.FC = () => {
         setPosts(posts.filter(p => p.id !== id))
     }
 
+    const onPaginationPageClick = (targetPage: number) => setCurrentPage(targetPage)
+
     const [fetchPosts, isLoading, error] = useFetching(async () => {
-        const posts = await postsAPI.getPosts()
-        setPosts(posts)
+        const posts = await PostsAPI.getPosts(postsLimit, currentPage)
+        setPosts(posts.data)
+        const totalPostsCount = Number(posts.headers['x-total-count'])
+        setPagesCount(getPagesCount(totalPostsCount, postsLimit))
     })
 
     useEffect(() => {
         fetchPosts()
-    }, [])
+    }, [currentPage])
 
     return (
         <div className={'app'}>
@@ -74,6 +83,8 @@ export const App: React.FC = () => {
                          setFilter={setFilter}
                          modalVisible={modalVisible}
                          setModalVisible={setModalVisible}/>}
+
+            <Pagination pagesCount={pagesCount} currentPage={currentPage} onClick={onPaginationPageClick}/>
 
         </div>
     )
