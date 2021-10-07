@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react'
+import React, {useEffect, useMemo, useRef, useState} from 'react'
 import {useFetching} from '../hooks/useFetching'
 import {PostsAPI} from '../api/posts-api'
 import {getPagesCount} from '../utils/pages'
@@ -26,7 +26,7 @@ export type FilterType = {
     search: string
 }
 
-export const PostsPage: React.FC = props => {
+export const PostsPage: React.FC = () => {
     const [posts, setPosts] = useState<PostsType[]>([])
     const options: SortOptionsType[] = [
         {value: 'title', title: 'Sort by title'},
@@ -37,6 +37,8 @@ export const PostsPage: React.FC = props => {
     const [pagesCount, setPagesCount] = useState<number>(1)
     const [postsLimit, setPostsLimit] = useState<number>(10)
     const [currentPage, setCurrentPage] = useState<number>(1)
+    const lastElement = useRef<any>(null)
+    const observer = useRef<any>(null)
 
     const sortedPosts = useMemo(() => {
         if (filter.sort) return [...posts]
@@ -60,11 +62,25 @@ export const PostsPage: React.FC = props => {
     const onPaginationPageClick = (targetPage: number) => setCurrentPage(targetPage)
 
     const [fetchPosts, isLoading] = useFetching(async () => {
-        const posts = await PostsAPI.getPosts(postsLimit, currentPage)
-        setPosts(posts.data)
-        const totalPostsCount = Number(posts.headers['x-total-count'])
+        const response = await PostsAPI.getPosts(postsLimit, currentPage)
+        setPosts([...posts, ...response.data])
+        const totalPostsCount = Number(response.headers['x-total-count'])
         setPagesCount(getPagesCount(totalPostsCount, postsLimit))
     })
+
+    // Endless list. But pagination has broken
+    useEffect(() => {
+        if (isLoading) return
+        if (observer.current) observer.current.disconnect()
+        const callback = (entries: any) => {
+            if (entries[0].isIntersecting && currentPage < pagesCount) {
+                setCurrentPage(currentPage + 1)
+            }
+        }
+
+        observer.current = new IntersectionObserver(callback)
+        observer.current.observe(lastElement.current)
+    }, [isLoading])
 
     useEffect(() => {
         fetchPosts()
@@ -72,17 +88,19 @@ export const PostsPage: React.FC = props => {
 
     return (
         <div className={'app'}>
-            {isLoading
-                ? <Progress/>
-                : <Posts posts={sortedAndFilteredPosts}
-                         title={'Posts List #1'}
-                         removePost={removePost}
-                         options={options}
-                         addNewPost={addNewPost}
-                         filter={filter}
-                         setFilter={setFilter}
-                         modalVisible={modalVisible}
-                         setModalVisible={setModalVisible}/>}
+            {isLoading && <Progress/>}
+
+            <Posts posts={sortedAndFilteredPosts}
+                   title={'Posts List #1'}
+                   removePost={removePost}
+                   options={options}
+                   addNewPost={addNewPost}
+                   filter={filter}
+                   setFilter={setFilter}
+                   modalVisible={modalVisible}
+                   setModalVisible={setModalVisible}/>
+
+            <div ref={lastElement}/>
 
             <Pagination pagesCount={pagesCount} currentPage={currentPage} onClick={onPaginationPageClick}/>
 

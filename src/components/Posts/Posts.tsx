@@ -38,7 +38,7 @@ export const Posts: React.FC<PostsProps> = props => {
                 <PostForm onSubmit={addNewPost}/>
             </Modal>
 
-            <h2 style={{margin: '24px 0'}}>{title}</h2>
+            <h1>{title}</h1>
             <button onClick={() => setModalVisible(true)} style={{marginBottom: 24}}>Add post</button>
 
             <PostsFilter options={options}
